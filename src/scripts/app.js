@@ -1,12 +1,49 @@
-import moment from 'moment'
+import $ from 'jquery';
+import React from "react";
+import ReactDOM from "react-dom";
 
-let m = moment(Date.now()).year()
+const ProfileList = React.createClass({
+ _mapOverCongress: function(){
+
+   return this.props.congressProp.map(function(obj){
+     console.log(obj)
+     return <SingleProfile singleCongress={obj}/>
+   })
+ },
+render: function(){
+  console.log(this.props.congressProp)
+  return(
+    <div>
+      {this._mapOverCongress()}
+    </div>
+  )
+}
+
+})
+
+const SingleProfile = React.createClass({
 
 
-{ userName: 'Honey Bear' ,  lastLoggedIn: 1488335292232 },
-{ userName: 'Lazy Philosopher' ,  lastLoggedIn: 1488248962768 },
-{ userName: 'HRG',  lastLoggedIn: 1488076247719 },
-{ userName: 'ChirpChirp',  lastLoggedIn: 1488076190847 },
-{ userName: 'Babushka',  lastLoggedIn: 1488007366792 },
-{ userName: 'Oh Mia',  lastLoggedIn: 1486694105551 }
+  render: function(){
+    let congressPerson = this.props.singleCongress
+    return(
+      <div className="columns-container">
+        <h4>{congressPerson.first_name} {congressPerson.last_name}</h4>
+        <h5>{congressPerson.title} -- {congressPerson.party}-{congressPerson.state}</h5>
+        <ul>
+          <li> email: {congressPerson.oc_email}</li>
+          <li> website: {congressPerson.website}</li>
+          <li> facebook: {congressPerson.facebook_id}</li>
+          <li> twitter: {congressPerson.twitter_id}</li>
+        </ul>
+        <h6>Term End{congressPerson.term_end}</h6>
+      </div>
+    )
+  }
 
+
+})
+
+$.getJSON("https://congress.api.sunlightfoundation.com/legislators?callback=?").then(function(serverRes){
+  ReactDOM.render(<ProfileList congressProp ={serverRes.results}/>, document.querySelector('#app-container'));
+})
